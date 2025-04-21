@@ -1,0 +1,180 @@
+/* ==== Base Styling ==== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('./background_food.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(2px);
+  z-index: -1;
+}
+
+.App {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+/* ==== Header Section ==== */
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* ==== Form Styling ==== */
+.search-form {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-form select, .search-form button {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+}
+
+.search-form button {
+  background-color: #2f8132;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background-color: #256028;
+}
+
+/* ==== Restaurant Grid ==== */
+.restaurant-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 2rem;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.restaurant-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.restaurant-card:hover {
+  transform: scale(1.03);
+}
+
+.restaurant-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.restaurant-card p {
+  margin: 0.3rem 0;
+  color: #555;
+}
+
+/* ==== Messages ==== */
+.empty-message,
+.loading-text,
+.error-text {
+  text-align: center;
+  font-style: italic;
+  font-size: 18px;
+  color: #555;
+  margin-top: 2rem;
+}
+
+/* ==== Responsive Breakpoint ==== */
+@media (max-width: 768px) {
+  .restaurant-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* For dropdowns and button near the top */
+.filters select,
+.filters button {
+  font-size: 16px;           /* increase font size */
+  padding: 10px 14px;        /* more space inside */
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 20px 0;
+}
+
+
+.signup-container {
+  max-width: 400px;
+  margin: 100px auto;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.signup-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.signup-container input {
+  width: 90%;
+  padding: 0.7rem;
+  margin: 0.6rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.signup-container button {
+  width: 95%;
+  padding: 0.7rem;
+  background-color: #2f8132;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.signup-container button:hover {
+  background-color: #256028;
+}
+
