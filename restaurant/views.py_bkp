@@ -1,0 +1,51 @@
+from rest_framework import viewsets
+from rest_framework.response import Response
+from django.db import connection
+from .serializers import MergedRestaurantSerializer
+# restaurant/views.py
+
+class MergedRestaurantViewSet(viewsets.ViewSet):
+    def list(self, request):
+        category = request.query_params.get('category')
+        rating = request.query_params.get('rating')
+        search = request.query_params.get('search')
+
+        sql_query = """
+            SELECT
+                r.name AS restaurant_name,
+                r.category,
+                r.rating,
+                r.review_count,
+                h.user_id AS recommendation_user_id
+            FROM
+                restaurants r
+            JOIN
+                hybrid_recommendations h ON r.name = h.name
+            WHERE 1=1
+        """
+
+        params = []
+
+        if category:
+            sql_query += " AND r.category = %s"
+            params.append(category)
+
+        if rating:
+            sql_query += " AND r.rating >= %s"
+            params.append(rating)
+
+        if search:
+            sql_query += " AND r.name LIKE %s"
+            params.append(f'%{search}%')
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, params)
+            results = cursor.fetchall()
+            if cursor.description:
+                columns = [col[0] for col in cursor.description]
+                data = [dict(zip(columns, row)) for row in results]
+            else:
+                data = []
+
+            serializer = MergedRestaurantSerializer(data, many=True)
+            return Response(serializer.data)
