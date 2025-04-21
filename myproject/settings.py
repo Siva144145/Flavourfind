@@ -160,6 +160,7 @@ STATICFILES_DIRS = [
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'frontend/build')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -170,4 +171,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
+}
