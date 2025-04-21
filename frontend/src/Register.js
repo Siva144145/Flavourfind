@@ -14,22 +14,25 @@ function Register({ onRegister }) {
     }
 
     try {
-const response = await fetch('https://flavourfind.onrender.com/api/auth/registration/', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password1, password2, username })
-});
+      console.log("Trying registration with", email, password1);
+      const response = await fetch('https://flavourfind.onrender.com/api/auth/registration/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, username, password1, password2 })
+      });
 
       if (!response.ok) {
         const err = await response.json();
+        console.error("Registration failed:", err);
         setError(JSON.stringify(err));
         return;
       }
 
       const data = await response.json();
       localStorage.setItem('token', data.key);
-      onRegister(); // redirects after registration
+      onRegister(); // redirect or callback
     } catch (err) {
+      console.error("Something went wrong:", err);
       setError("Something went wrong");
     }
   };

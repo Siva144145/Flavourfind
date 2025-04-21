@@ -6,6 +6,8 @@ from django.db import connection
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from restaurant.models import Restaurant
+
 import json
 
 class FrontendAppView(TemplateView):

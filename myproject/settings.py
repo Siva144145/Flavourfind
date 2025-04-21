@@ -85,8 +85,16 @@ TEMPLATES = [
 WSGI_APPLICATION = "myproject.wsgi.application"
 
 DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'restaurant_recommendation',
+        'USER': 'root',
+        'PASSWORD': 'Pssr@143sri',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
+
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
