@@ -69,17 +69,13 @@ class MergedRestaurantViewSet(viewsets.ViewSet):
 
 @api_view(['GET'])
 def dropdown_options(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT cuisine FROM clean_restaurants WHERE cuisine IS NOT NULL")
-        cuisines = [row[0] for row in cursor.fetchall()]
-
-        cursor.execute("SELECT DISTINCT city FROM clean_restaurants WHERE city IS NOT NULL")
-        cities = [row[0] for row in cursor.fetchall()]
-
-    return JsonResponse({
-        "cuisines": sorted(cuisines),
-        "cities": sorted(cities),
-    })
+    try:
+        cuisines = list(Restaurant.objects.values_list('category', flat=True).distinct())
+        cities = list(Restaurant.objects.values_list('location', flat=True).distinct())
+        return JsonResponse({'cuisines': cuisines, 'cities': cities})
+    except Exception as e:
+        print(f"[DROPDOWN ERROR] {str(e)}")  # check this in Render logs
+        return JsonResponse({'error': 'Failed to fetch dropdown options'}, status=500)
 
 
 @csrf_exempt
