@@ -14,11 +14,11 @@ function Register({ onRegister }) {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/registration/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password1, password2 })
-      });
+const response = await fetch('https://flavourfind.onrender.com/api/auth/registration/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password1, password2, username })
+});
 
       if (!response.ok) {
         const err = await response.json();

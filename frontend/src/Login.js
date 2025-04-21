@@ -4,22 +4,27 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch('https://flavourfind.onrender.com/api/auth/login/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
 
-    const data = await response.json();
-    if (data.key) {
-      localStorage.setItem('token', data.key);
-      onLogin();
-    } else {
-      alert('Login failed!');
+    if (!response.ok) {
+      throw new Error('Login failed');
     }
-  };
+
+    const data = await response.json();
+    localStorage.setItem('token', data.key);
+    onLogin(); // redirect or set logged in state
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Login failed. Please check your credentials.');
+  }
+};
 
   return (
     <div className="login-box">

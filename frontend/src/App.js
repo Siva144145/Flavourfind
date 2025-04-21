@@ -13,14 +13,15 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('token'));
   const [showRegister, setShowRegister] = useState(false);
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/dropdown_options/')
-      .then((response) => response.json())
-      .then((data) => {
-        setCuisines(data.cuisines || []);
-        setCities(data.cities || []);
-      });
-  }, []);
+useEffect(() => {
+  fetch('https://flavourfind.onrender.com/api/dropdown_options/')
+    .then((response) => response.json())
+    .then((data) => {
+      setCuisines(data.cuisines || []);
+      setCities(data.cities || []);
+    });
+}, []);
+
 
   const handleSearch = () => {
     const query = new URLSearchParams({
@@ -29,7 +30,7 @@ function App() {
       sort_by: sortBy
     }).toString();
 
-    fetch(`http://127.0.0.1:8000/api/merged_restaurants/?${query}`)
+       fetch('https://flavourfind.onrender.com/api/dropdown_options/')
       .then((response) => response.json())
       .then((data) => setRestaurants(data));
   };
