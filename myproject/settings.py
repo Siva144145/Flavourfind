@@ -80,7 +80,7 @@ ROOT_URLCONF = "myproject.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Make sure this path is correct
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ✅ should be like this
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,13 +153,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend/build/static'),
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # for deployment
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # <- ✅
+    }
 ]
 
-TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'frontend/build')]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

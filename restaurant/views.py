@@ -5,7 +5,11 @@ from django.http import JsonResponse
 from django.db import connection
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 import json
+
+class FrontendAppView(TemplateView):
+    template_name = 'index.html'
 
 class MergedRestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
