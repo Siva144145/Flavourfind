@@ -84,15 +84,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "myproject.wsgi.application"
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'restaurant_recommendation',
-        'USER': 'root',
-        'PASSWORD': 'Pssr@143sri',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(default='mysql://root:Pssr@143sri@flavour-db.mysql.render.com:3306/restaurant_recommendation')
 }
 
 
