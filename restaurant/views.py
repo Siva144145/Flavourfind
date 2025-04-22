@@ -6,12 +6,13 @@ from django.db import connection
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from restaurant.models import Restaurant
-
+from restaurant.models import Restaurant, Category
 import json
+
 
 class FrontendAppView(TemplateView):
     template_name = 'index.html'
+
 
 class MergedRestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -69,35 +70,42 @@ class MergedRestaurantViewSet(viewsets.ViewSet):
 
         return Response(data)
 
+
 @api_view(['GET'])
 def dropdown_options(request):
     try:
-        cuisines = list(Restaurant.objects.values_list('category', flat=True).distinct())
-        cities = list(Restaurant.objects.values_list('location', flat=True).distinct())
+        with connection.cursor() as cursor:
+            # Distinct cuisines
+            cursor.execute("SELECT DISTINCT category_name FROM restaurant_category")
+            cuisines = [row[0] for row in cursor.fetchall()]
+
+            # Distinct cities
+            cursor.execute("SELECT DISTINCT city FROM clean_restaurants")
+            cities = [row[0] for row in cursor.fetchall()]
+
         return JsonResponse({'cuisines': cuisines, 'cities': cities})
     except Exception as e:
-        print(f"[DROPDOWN ERROR] {str(e)}")  # check this in Render logs
+        print(f"[DROPDOWN ERROR] {str(e)}")
         return JsonResponse({'error': 'Failed to fetch dropdown options'}, status=500)
 
 
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists'}, status=400)
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'error': 'Username already exists'}, status=400)
 
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.save()
-        return JsonResponse({'message': 'User registered successfully'}, status=201)
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.save()
+            return JsonResponse({'message': 'User registered successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-@api_view(['POST'])
-def register(request):
-    # Temporary placeholder response
-    return Response({"message": "User registered (placeholder)"})
