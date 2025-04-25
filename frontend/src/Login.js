@@ -3,28 +3,32 @@ import React, { useState } from 'react';
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("➡️ Submitting login:", email, password);
+
     try {
-      console.log("Trying login with", email, password);
-      const response = await fetch('https://flavourfind.onrender.com/api/auth/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }) // ✅ dj_rest_auth expects email & password only
+        body: JSON.stringify({ email, password })
       });
 
+      const data = await response.json();
+      console.log("📦 Response:", data);
+
       if (!response.ok) {
-        const error = await response.json();
-        console.error("Login failed:", error);
-        throw new Error('Login failed');
+        setError(data.non_field_errors?.[0] || "Login failed. Check credentials.");
+        return;
       }
 
-      const data = await response.json();
       localStorage.setItem('token', data.key);
-      onLogin(); // ✅ callback after login
-    } catch (error) {
-      alert('Login failed. Please check your credentials.');
+      onLogin(); // callback after login
+    } catch (err) {
+      console.error("❌ Login exception:", err);
+      setError("Something went wrong. Try again.");
     }
   };
 
@@ -36,6 +40,7 @@ function Login({ onLogin }) {
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit">Login</button>
       </form>
+      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
     </div>
   );
 }

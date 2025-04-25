@@ -6,7 +6,7 @@ from django.db import connection
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from restaurant.models import Restaurant, Category
+from restaurant.models import CleanRestaurant
 import json
 
 
@@ -17,7 +17,7 @@ class FrontendAppView(TemplateView):
 class MergedRestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
         category = request.query_params.get('category')
-        location = request.query_params.get('location')
+        location = request.query_params.get('location')  # used as state now
         sort_by = request.query_params.get('sort_by')
 
         sql_query = """
@@ -31,14 +31,10 @@ class MergedRestaurantViewSet(viewsets.ViewSet):
                 categories,
                 stars_x AS rating,
                 review_count,
-                phone,
-                CASE 
-                    WHEN JSON_VALID(attributes) AND JSON_EXTRACT(attributes, '$.RestaurantsPriceRange2') IS NOT NULL 
-                    THEN JSON_UNQUOTE(JSON_EXTRACT(attributes, '$.RestaurantsPriceRange2')) 
-                    ELSE NULL 
-                END AS price_range,
                 hours,
-                website
+                phone,
+                website,
+                cuisine
             FROM clean_restaurants
             WHERE 1 = 1
         """
@@ -50,7 +46,7 @@ class MergedRestaurantViewSet(viewsets.ViewSet):
             params.append(f"%{category}%")
 
         if location:
-            sql_query += " AND city LIKE %s"
+            sql_query += " AND state LIKE %s"
             params.append(f"%{location}%")
 
         if sort_by == 'rating':
@@ -74,16 +70,26 @@ class MergedRestaurantViewSet(viewsets.ViewSet):
 @api_view(['GET'])
 def dropdown_options(request):
     try:
-        with connection.cursor() as cursor:
-            # Distinct cuisines
-            cursor.execute("SELECT DISTINCT category_name FROM restaurant_category")
-            cuisines = [row[0] for row in cursor.fetchall()]
+        common_cuisines = [
+            'Indian', 'Mexican', 'American', 'Chinese', 'Italian',
+            'Mediterranean', 'Thai', 'Japanese', 'French', 'Greek',
+            'Vietnamese', 'Korean', 'Spanish', 'Turkish', 'Lebanese'
+        ]
 
-            # Distinct cities
-            cursor.execute("SELECT DISTINCT city FROM clean_restaurants")
-            cities = [row[0] for row in cursor.fetchall()]
+        # Filter categories that contain at least one of the common cuisine terms
+        cuisine_qs = CleanRestaurant.objects.values_list('categories', flat=True).distinct()
+        filtered_cuisines = set()
 
-        return JsonResponse({'cuisines': cuisines, 'cities': cities})
+        for cat in cuisine_qs:
+            if not cat:
+                continue
+            for cuisine in common_cuisines:
+                if cuisine.lower() in cat.lower():
+                    filtered_cuisines.add(cuisine)
+        
+        states = list(CleanRestaurant.objects.values_list('state', flat=True).distinct())
+        return JsonResponse({'cuisines': sorted(filtered_cuisines), 'states': sorted(states)})
+    
     except Exception as e:
         print(f"[DROPDOWN ERROR] {str(e)}")
         return JsonResponse({'error': 'Failed to fetch dropdown options'}, status=500)

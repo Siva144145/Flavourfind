@@ -10,9 +10,17 @@ djangorestframework==3.16.0
 gunicorn==23.0.0
 idna==3.10
 mysqlclient==2.2.7
+numpy==2.2.5
 packaging==25.0
+pandas==2.2.3
+PyMySQL==1.1.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
 requests==2.32.3
+six==1.17.0
+SQLAlchemy==2.0.40
 sqlparse==0.5.3
 typing_extensions==4.13.2
+tzdata==2025.2
 urllib3==2.4.0
 whitenoise==6.9.0

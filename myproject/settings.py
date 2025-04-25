@@ -87,7 +87,18 @@ WSGI_APPLICATION = "myproject.wsgi.application"
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(default='mysql://root:Pssr@143sri@flavour-db.mysql.render.com:3306/restaurant_recommendation')
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'restaurant_recommendation',
+        'USER': 'root',
+        'PASSWORD': 'Pssr@143sri',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'local_infile': 1,
+        }
+    }
 }
 
 
